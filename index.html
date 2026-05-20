@@ -1,258 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
-<meta charset="UTF-8">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <style>
-  :root {
-    --color-background-primary: #ffffff;
-    --color-border-secondary: #eaeaea;
-    --color-text-primary: #1a1a1a;
-    --color-text-secondary: #666666;
-    --border-radius-lg: 12px;
-    --accent-blue: #3B79BB; /* Updated accent color */
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body { 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-    background-color: #FBFDFB;
-  }
+:root{
+  --bg:#FBFDFB;
+  --white:#ffffff;
+  --blue:#3B79BB;
+  --border:#eaeaea;
+  --text:#1a1a1a;
+  --muted:#666666;
+  --radius:14px;
+}
 
-  .ring-wrap{position:relative;width:600px;height:600px;margin:40px auto}
-  .seg{position:absolute;cursor:pointer;transition:transform 0.22s cubic-bezier(.34,1.56,.64,1)}
-  .seg svg{display:block;overflow:visible}
-  .seg path{transition:fill 0.2s, stroke-width 0.2s; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));}
-  .seg:hover path { stroke-width: 2.5px; opacity: 0.9; }
-  
-  /* Tooltip Styling */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* RESPONSIVE WRAPPER */
+.ring-wrap{
+  position:relative;
+  width:min(92vw,700px);
+  aspect-ratio:1/1;
+  margin:auto;
+}
+
+.seg{
+  position:absolute;
+  cursor:pointer;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+
+.seg svg{
+  overflow:visible;
+  display:block;
+}
+
+.seg path{
+  transition:.2s;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.08));
+}
+
+.seg:hover path{
+  opacity:.92;
+  stroke-width:2.5;
+}
+
+.tooltip{
+  position:fixed;
+  pointer-events:none;
+  z-index:9999;
+
+  width:230px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+
+  padding:12px;
+
+  opacity:0;
+  transform:translateY(10px);
+  transition:.2s;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.12);
+}
+
+.tooltip.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.tooltip img{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:10px;
+  display:none;
+  background:#f0f0f0;
+}
+
+.tooltip img.has-img{
+  display:block;
+}
+
+.tooltip h3{
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:5px;
+}
+
+.tooltip .timeline{
+  font-size:12px;
+  font-weight:600;
+  color:var(--blue);
+}
+
+/* CENTER LABEL */
+
+.center-label{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  pointer-events:none;
+}
+
+.center-label span{
+  display:block;
+  font-size:clamp(16px,2vw,24px);
+  font-weight:800;
+  color:var(--muted);
+  letter-spacing:1px;
+  line-height:1.4;
+}
+
+.center-label hr{
+  border:none;
+  border-top:1px solid #ddd;
+  margin:6px auto;
+  width:70%;
+}
+
+/* MOBILE */
+
+@media(max-width:640px){
+
   .tooltip{
-    position:fixed;pointer-events:none;z-index:9999;
-    background: var(--color-background-primary);
-    border: 1px solid var(--color-border-secondary);
-    border-radius: var(--border-radius-lg);
-    padding: 12px;
-    width: 220px;
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    transform: translateY(10px);
-    text-align: center;
-  }
-  .tooltip.show{opacity:1; transform: translateY(0);}
-  
-  .tooltip img { 
-    width: 100%; 
-    height: 130px; 
-    object-fit: cover; 
-    border-radius: 6px; 
-    margin-bottom: 10px; 
-    display: none; 
-    background: #f0f0f0;
-  }
-  .tooltip img.has-img { display: block; }
-  
-  .tooltip h3{font-size:15px;font-weight:700;color:var(--color-text-primary);margin-bottom:4px}
-  .tooltip .timeline { 
-    font-size: 12px; 
-    font-weight: 600; 
-    color: var(--accent-blue); 
-    display: block;
+    width:200px;
   }
 
-  .center-label{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    text-align:center;pointer-events:none; width: 140px;
+  .tooltip img{
+    height:110px;
   }
-  .center-label span{
-    font-size:20px; font-weight: 700; color:var(--color-text-secondary); 
-    letter-spacing: 1px; line-height: 1.4;
-  }
-  .center-label hr { border: 0; border-top: 1px solid #ddd; margin: 5px 20px; }
+
+}
 </style>
 </head>
+
 <body>
 
 <div class="ring-wrap" id="ring"></div>
 
-<!-- Tooltip Structure -->
 <div class="tooltip" id="tip">
-  <img id="tip-img" src="" alt="Preview">
+  <img id="tip-img" src="" alt="">
   <h3 id="tip-title"></h3>
   <span class="timeline" id="tip-time"></span>
 </div>
 
 <script>
-/** 
- * Data Configuration
- * All colors set to #3B79BB with white text/strokes
- */
+
 const MAIN_BLUE = "#3B79BB";
 const WHITE = "#ffffff";
 
 const SEGMENT_DATA = [
+
   {
-    title: "iLab Darchula",
-    timeline: "22-27 September 2026",
-    img: "darchula.png", 
-    href: "https://ewb.org.np/projects/i-lab-darchula/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Darchula",
+    timeline:"22-27 September 2026",
+    img:"darchula.png",
+    href:"https://ewb.org.np/projects/i-lab-darchula/"
   },
+
   {
-    title: "iLab Simara",
-    timeline: "23-27 June, 2025",
-    img: "simara.png",
-    href: "https://ewb.org.np/projects/i-lab-simara/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Simara",
+    timeline:"23-27 June 2025",
+    img:"simara.png",
+    href:"https://ewb.org.np/projects/i-lab-simara/"
   },
+
   {
-    title: "iLab Syangja",
-    timeline: "20-25 January, 2026",
-    img: "syangja.png",
-    href: "https://ewb.org.np/projects/i-lab-syangja/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Syangja",
+    timeline:"20-25 January 2026",
+    img:"syangja.png",
+    href:"https://ewb.org.np/projects/i-lab-syangja/"
   },
+
   {
-    title: "iLab Roshi",
-    timeline: "11-15 January, 2026",
-    img: "roshi.png",
-    href: "https://ewb.org.np/projects/i-lab-roshi/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Roshi",
+    timeline:"11-15 January 2026",
+    img:"roshi.png",
+    href:"https://ewb.org.np/projects/i-lab-roshi/"
   },
+
   {
-    title: "iLab KPKS",
-    timeline: "May-March, 2026",
-    img: "kpksilab.png", // Added .png extension for consistency
-    href: "https://ewb.org.np/projects/i-lab-kpks/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab KPKS",
+    timeline:"May-March 2026",
+    img:"kpksilab.png",
+    href:"https://ewb.org.np/projects/i-lab-kpks/"
   },
+
   {
-    title: "iLab Siraha",
-    timeline: "19-24 December, 2023",
-    img: "siraha.png",
-    href: "https://ewb.org.np/projects/i-lab-siraha/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Siraha",
+    timeline:"19-24 December 2023",
+    img:"siraha.png",
+    href:"https://ewb.org.np/projects/i-lab-siraha/"
   },
+
   {
-    title: "iLab Shringeri",
-    timeline: "14 July - 18 Sept, 2024",
-    img: "shringeri.png",
-    href: "https://ewb.org.np/projects/i-lab-shringeri/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Shringeri",
+    timeline:"14 July - 18 Sept 2024",
+    img:"shringeri.png",
+    href:"https://ewb.org.np/projects/i-lab-shringeri/"
   },
+
   {
-    title: "iLab Chitwan",
-    timeline: "5-9 November, 2023",
-    img: "chitwan.png",
-    href: "https://ewb.org.np/projects/i-lab-chitwan/",
-    colors: [MAIN_BLUE, WHITE, WHITE]
+    title:"iLab Chitwan",
+    timeline:"5-9 November 2023",
+    img:"chitwan.png",
+    href:"https://ewb.org.np/projects/i-lab-chitwan/"
   }
+
 ];
 
-const CX=300, CY=300, R_IN=110, R_OUT=280;
-const N = SEGMENT_DATA.length;
-const GAP_DEG = 2.0; 
+/* ========= DYNAMIC SIZE ========= */
+
+const ring = document.getElementById("ring");
+
+const SIZE = ring.offsetWidth;
+
+const CX = SIZE / 2;
+const CY = SIZE / 2;
+
+const R_OUT = SIZE * 0.46;
+const R_IN  = SIZE * 0.18;
+
+const GAP_DEG = 2;
 const PAD = 5;
 
-function toRad(d){return d*Math.PI/180}
-function pt(cx,cy,r,deg){return[cx+r*Math.cos(toRad(deg)),cy+r*Math.sin(toRad(deg))]}
+const N = SEGMENT_DATA.length;
+
+const sliceDeg = (360 - N * GAP_DEG) / N;
+const startOffset = -90;
+
+/* ========= HELPERS ========= */
+
+function toRad(d){
+  return d * Math.PI / 180;
+}
+
+function pt(cx,cy,r,deg){
+  return [
+    cx + r * Math.cos(toRad(deg)),
+    cy + r * Math.sin(toRad(deg))
+  ];
+}
 
 function wedgePath(a1,a2,rIn,rOut){
-  const[x1,y1]=pt(CX,CY,rIn,a1);
-  const[x2,y2]=pt(CX,CY,rOut,a1);
-  const[x3,y3]=pt(CX,CY,rOut,a2);
-  const[x4,y4]=pt(CX,CY,rIn,a2);
-  const lg=a2-a1>180?1:0;
-  return`M${x1},${y1} L${x2},${y2} A${rOut},${rOut} 0 ${lg},1 ${x3},${y3} L${x4},${y4} A${rIn},${rIn} 0 ${lg},0 ${x1},${y1} Z`;
+
+  const [x1,y1] = pt(CX,CY,rIn,a1);
+  const [x2,y2] = pt(CX,CY,rOut,a1);
+  const [x3,y3] = pt(CX,CY,rOut,a2);
+  const [x4,y4] = pt(CX,CY,rIn,a2);
+
+  const lg = a2-a1 > 180 ? 1 : 0;
+
+  return `
+    M${x1},${y1}
+    L${x2},${y2}
+    A${rOut},${rOut} 0 ${lg},1 ${x3},${y3}
+    L${x4},${y4}
+    A${rIn},${rIn} 0 ${lg},0 ${x1},${y1}
+    Z
+  `;
 }
 
 function sampleArc(r,a1,a2,n=30){
-  const pts=[];
+
+  const pts = [];
+
   for(let i=0;i<=n;i++){
-    const a=a1+(a2-a1)*i/n;
+
+    const a = a1 + (a2-a1)*i/n;
+
     pts.push(pt(CX,CY,r,a));
+
   }
+
   return pts;
 }
 
-const ring=document.getElementById('ring');
-const tip=document.getElementById('tip');
-const tipTitle=document.getElementById('tip-title');
-const tipTime=document.getElementById('tip-time');
-const tipImg=document.getElementById('tip-img');
+/* ========= TOOLTIP ========= */
 
-const sliceDeg=(360-N*GAP_DEG)/N;
-const startOffset=-90;
+const tip = document.getElementById("tip");
+const tipTitle = document.getElementById("tip-title");
+const tipTime = document.getElementById("tip-time");
+const tipImg = document.getElementById("tip-img");
 
-SEGMENT_DATA.forEach((seg, i) => {
-  const a1=startOffset+i*(sliceDeg+GAP_DEG)+GAP_DEG/2;
-  const a2=a1+sliceDeg;
-  const path=wedgePath(a1,a2,R_IN,R_OUT);
+/* ========= BUILD ========= */
 
-  const pts = [...sampleArc(R_OUT,a1,a2), ...sampleArc(R_IN,a1,a2)];
-  let minX=Math.min(...pts.map(p=>p[0])), maxX=Math.max(...pts.map(p=>p[0]));
-  let minY=Math.min(...pts.map(p=>p[1])), maxY=Math.max(...pts.map(p=>p[1]));
+SEGMENT_DATA.forEach((seg,i)=>{
+
+  const a1 =
+    startOffset +
+    i * (sliceDeg + GAP_DEG) +
+    GAP_DEG / 2;
+
+  const a2 = a1 + sliceDeg;
+
+  const path = wedgePath(a1,a2,R_IN,R_OUT);
+
+  const pts = [
+    ...sampleArc(R_OUT,a1,a2),
+    ...sampleArc(R_IN,a1,a2)
+  ];
+
+  let minX = Math.min(...pts.map(p=>p[0]));
+  let maxX = Math.max(...pts.map(p=>p[0]));
+
+  let minY = Math.min(...pts.map(p=>p[1]));
+  let maxY = Math.max(...pts.map(p=>p[1]));
+
+  const W = maxX - minX + PAD*2;
+  const H = maxY - minY + PAD*2;
+
+  const ox = minX - PAD;
+  const oy = minY - PAD;
+
+  const toX = ((CX-ox)/W*100).toFixed(2);
+  const toY = ((CY-oy)/H*100).toFixed(2);
+
+  const aMid = (a1+a2)/2;
+
+  const rText = (R_IN + R_OUT) / 2;
+
+  const [lx,ly] = pt(CX,CY,rText,aMid);
+
+  const div = document.createElement("div");
+
+  div.className = "seg";
+
+  div.style.cssText = `
+    left:${ox}px;
+    top:${oy}px;
+    width:${W}px;
+    height:${H}px;
+    transform-origin:${toX}% ${toY}%;
+  `;
+
+  div.innerHTML = `
   
-  const W=maxX-minX+PAD*2, H=maxY-minY+PAD*2;
-  const ox=minX-PAD, oy=minY-PAD;
-  const toX=((CX-ox)/W*100).toFixed(2), toY=((CY-oy)/H*100).toFixed(2);
+  <svg
+    width="${W}"
+    height="${H}"
+    viewBox="${ox} ${oy} ${W} ${H}"
+  >
 
-  const aMid=(a1+a2)/2;
-  const rText=(R_IN+R_OUT)/2; 
-  const [lx, ly] = pt(CX, CY, rText, aMid);
+    <path
+      d="${path}"
+      fill="${MAIN_BLUE}"
+      stroke="${WHITE}"
+      stroke-width="1.5"
+    />
 
-  const [bg, stroke, text] = seg.colors;
+    <text
+      x="${lx}"
+      y="${ly}"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      transform="rotate(${aMid+90}, ${lx}, ${ly})"
+      font-size="${SIZE * 0.022}"
+      font-weight="700"
+      fill="${WHITE}"
+      style="pointer-events:none;"
+    >
+      ${seg.title}
+    </text>
 
-  const div=document.createElement('div');
-  div.className='seg';
-  div.style.cssText=`left:${ox}px;top:${oy}px;width:${W}px;height:${H}px;transform-origin:${toX}% ${toY}%`;
+  </svg>
+  
+  `;
 
-  div.innerHTML=`
-    <svg width="${W}" height="${H}" viewBox="${ox} ${oy} ${W} ${H}">
-      <path d="${path}" fill="${bg}" stroke="${stroke}" stroke-width="1.5"/>
-      <text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" 
-            transform="rotate(${aMid+90}, ${lx}, ${ly})"
-            font-size="12" font-weight="700" fill="${text}" style="pointer-events:none;">
-        ${seg.title}
-      </text>
-    </svg>`;
+  /* HOVER */
 
-  div.addEventListener('mouseenter', () => {
-    div.style.transform='scale(1.07)';
+  div.addEventListener("mouseenter",()=>{
+
+    div.style.transform = "scale(1.06)";
+
     tipTitle.textContent = seg.title;
     tipTime.textContent = seg.timeline;
-    
-    if(seg.img) {
-        tipImg.src = seg.img;
-        tipImg.classList.add('has-img');
-    } else {
-        tipImg.classList.remove('has-img');
+
+    if(seg.img){
+
+      tipImg.src = seg.img;
+      tipImg.classList.add("has-img");
+
+    }else{
+
+      tipImg.classList.remove("has-img");
+
     }
-    tip.classList.add('show');
+
+    tip.classList.add("show");
+
   });
 
-  div.addEventListener('mousemove', e => {
-    let tx=e.clientX+20, ty=e.clientY-20;
-    if(tx+230 > window.innerWidth) tx = e.clientX-250;
-    if(ty+250 > window.innerHeight) ty = e.clientY-260;
-    tip.style.left=tx+'px';
-    tip.style.top=ty+'px';
+  div.addEventListener("mousemove",(e)=>{
+
+    let tx = e.clientX + 20;
+    let ty = e.clientY - 20;
+
+    if(tx + 240 > window.innerWidth){
+      tx = e.clientX - 250;
+    }
+
+    if(ty + 260 > window.innerHeight){
+      ty = e.clientY - 270;
+    }
+
+    tip.style.left = tx + "px";
+    tip.style.top = ty + "px";
+
   });
 
-  div.addEventListener('mouseleave', () => {
-    div.style.transform='scale(1)';
-    tip.classList.remove('show');
+  div.addEventListener("mouseleave",()=>{
+
+    div.style.transform = "scale(1)";
+    tip.classList.remove("show");
+
   });
 
-  div.addEventListener('click', () => {
-    if(seg.href) window.open(seg.href, '_blank');
+  div.addEventListener("click",()=>{
+
+    if(seg.href){
+
+      window.open(seg.href,"_blank");
+
+    }
+
   });
 
   ring.appendChild(div);
+
 });
 
-const center=document.createElement('div');
-center.className='center-label';
-center.innerHTML='<span>iLab<hr>IMPACT</span>';
+/* ========= CENTER ========= */
+
+const center = document.createElement("div");
+
+center.className = "center-label";
+
+center.innerHTML = `
+  <span>
+    iLab
+    <hr>
+    IMPACT
+  </span>
+`;
+
 ring.appendChild(center);
+
 </script>
 
 </body>
